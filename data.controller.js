@@ -1,25 +1,36 @@
 const fs = require("fs");
 const moment = require("moment");
-const csvWriter = require("csv-write-stream");
-const Papa = require("papaparse");
+
 const csv = require("csv-parser");
 
-let journeyListJson = [];
-let journeyListMap = [];
+let journeyList = [];
 
-let stationListJson = [];
-let stationListMap = [];
+let stationList = [];
 
 class GroupController {
-  JourneyList(request, response, next) {}
+  JourneyList(request, response, next) {
+    console.log("test");
+    journeyList = [];
+    console.time(__filename);
+    fs.createReadStream("2021-05.csv")
+      .pipe(csv())
+      .on("data", (row) => {
+        journeyList.push(row);
+      })
+      .on("end", () => {
+        console.log(journeyList.length);
+        response.sendStatus(200);
+        console.timeEnd(__filename);
+      });
+  }
 
-  async JourneyListByPage(request, response, next) {}
+  JourneyListByPage(request, response, next) {}
 
-  async StationList(request, response, next) {}
+  StationList(request, response, next) {}
 
-  async NewStation(request, response, next) {}
+  NewStation(request, response, next) {}
 
-  async NewJourney(request, response, next) {}
+  NewJourney(request, response, next) {}
 }
 
 module.exports = new GroupController();

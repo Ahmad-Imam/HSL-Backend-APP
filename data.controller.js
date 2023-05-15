@@ -71,7 +71,35 @@ class GroupController {
     }
   }
 
-  StationList(request, response, next) {}
+  StationList(request, response, next) {
+    var keys = [];
+    stationList = [];
+    var finalStationList = [];
+    var finalStationMap;
+    fs.createReadStream("Helsingin_ja_Espoon_kaupunkipyöräasemat_avoin.csv")
+      .pipe(csv())
+      .on("data", (row) => {
+        stationList.push(row);
+      })
+      .on("end", () => {
+        stationList.forEach((item, index) => {
+          keys = Object.keys(item);
+        });
+        stationList.forEach((item, index) => {
+          if (
+            !(isNaN(parseFloat(item[keys[11]])) && isNaN(item[keys[11]] - 0)) &&
+            !(isNaN(parseFloat(item[keys[12]])) && isNaN(item[keys[12]] - 0))
+          ) {
+            finalStationList.push(item);
+          }
+        });
+
+        console.log(finalStationList.length);
+        console.log(finalStationList[0]);
+
+        response.sendStatus(200);
+      });
+  }
 
   NewStation(request, response, next) {}
 

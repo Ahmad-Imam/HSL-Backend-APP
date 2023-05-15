@@ -28,17 +28,35 @@ class GroupController {
 
   JourneyListByPage(request, response, next) {
     console.log("in");
-    const PAGE_SIZE = 100;
+    const PAGE_SIZE = 10000;
     try {
       const pageNumber = parseInt(request.body.pageNumber) || 1;
       const startIndex = (pageNumber - 1) * PAGE_SIZE;
       const endIndex = pageNumber * PAGE_SIZE;
 
       const paginatedJourneyList = journeyList.slice(startIndex, endIndex);
-
+      var keys = [];
+      paginatedJourneyList.forEach((item, index) => {
+        keys = Object.keys(item);
+      });
       var finalJourneyList = [];
       paginatedJourneyList.forEach((item, index) => {
-        finalJourneyList.push(item);
+        if (
+          parseInt(item[keys[6]]) > 10 &&
+          parseInt(item[keys[7]]) > 10 &&
+          Number.isInteger(Number(item[keys[2]])) &&
+          Number(item[keys[2]]) > 0 &&
+          Number.isInteger(Number(item[keys[4]])) &&
+          Number(item[keys[4]]) > 0 &&
+          moment(item[keys[1]], moment.ISO_8601, true).isValid() &&
+          moment(item[keys[0]], moment.ISO_8601, true).isValid() &&
+          Number.isInteger(
+            Number(moment(item[keys[1]]).diff(moment(item[keys[0]])))
+          ) &&
+          Number(moment(item[keys[1]]).diff(moment(item[keys[0]]))) > 0
+        ) {
+          finalJourneyList.push(item);
+        }
       });
 
       response.json({

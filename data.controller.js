@@ -28,7 +28,7 @@ class GroupController {
 
   JourneyListByPage(request, response, next) {
     console.log("in");
-    const PAGE_SIZE = 10000;
+    const PAGE_SIZE = 10;
     try {
       const pageNumber = parseInt(request.body.pageNumber) || 1;
       const startIndex = (pageNumber - 1) * PAGE_SIZE;
@@ -60,11 +60,7 @@ class GroupController {
       });
 
       response.json({
-        journeyList: paginatedJourneyList.length,
-        finaljourneyListLength: finalJourneyList.length,
-        currentPage: pageNumber,
-        totalPages: Math.ceil(journeyList.length / PAGE_SIZE),
-        finaljourneyList: finalJourneyList,
+        paginatedJourneyList,
       });
     } catch (err) {
       response.status(500).json({ message: err.message });

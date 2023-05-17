@@ -28,7 +28,7 @@ class GroupController {
 
   JourneyListByPage(request, response, next) {
     console.log("in");
-    const PAGE_SIZE = 10;
+    const PAGE_SIZE = 100;
 
     try {
       const pageNumber = parseInt(request.body.pageNumber) || 1;

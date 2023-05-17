@@ -29,6 +29,7 @@ class GroupController {
   JourneyListByPage(request, response, next) {
     console.log("in");
     const PAGE_SIZE = 10;
+
     try {
       const pageNumber = parseInt(request.body.pageNumber) || 1;
       const startIndex = (pageNumber - 1) * PAGE_SIZE;
@@ -39,6 +40,7 @@ class GroupController {
       paginatedJourneyList.forEach((item, index) => {
         keys = Object.keys(item);
       });
+      console.log(keys);
       var finalJourneyList = [];
       paginatedJourneyList.forEach((item, index) => {
         if (
@@ -55,12 +57,23 @@ class GroupController {
           ) &&
           Number(moment(item[keys[1]]).diff(moment(item[keys[0]]))) > 0
         ) {
-          finalJourneyList.push(item);
+          var finalJourneyMap = [];
+          finalJourneyMap = {
+            departureDate: item[keys[0]],
+            returnDate: item[keys[1]],
+            departureStationId: item[keys[2]],
+            departureStationName: item[keys[3]],
+            returnStationId: item[keys[4]],
+            returnStationName: item[keys[5]],
+            coverDistance: item[keys[6]],
+            duration: item[keys[7]],
+          };
+          finalJourneyList.push(finalJourneyMap);
         }
       });
 
       response.json({
-        paginatedJourneyList,
+        finalJourneyList,
       });
     } catch (err) {
       response.status(500).json({ message: err.message });

@@ -1,6 +1,6 @@
 const fs = require("fs");
 const moment = require("moment");
-
+const csvWriter = require("csv-write-stream");
 const csv = require("csv-parser");
 
 let journeyList = [];
@@ -58,6 +58,7 @@ class GroupController {
           Number(moment(item[keys[1]]).diff(moment(item[keys[0]]))) > 0
         ) {
           var finalJourneyMap = [];
+
           finalJourneyMap = {
             departureDate: item[keys[0]],
             returnDate: item[keys[1]],
@@ -65,8 +66,8 @@ class GroupController {
             departureStationName: item[keys[3]],
             returnStationId: item[keys[4]],
             returnStationName: item[keys[5]],
-            coverDistance: item[keys[6]],
-            duration: item[keys[7]],
+            coverDistance: (parseInt(item[keys[6]]) / 1000).toPrecision(2),
+            duration: (parseInt(item[keys[7]]) / 60).toPrecision(2),
           };
           finalJourneyList.push(finalJourneyMap);
         }
@@ -94,6 +95,7 @@ class GroupController {
         stationList.forEach((item, index) => {
           keys = Object.keys(item);
         });
+        console.log(keys);
         stationList.forEach((item, index) => {
           if (
             !(isNaN(parseFloat(item[keys[11]])) && isNaN(item[keys[11]] - 0)) &&
@@ -104,15 +106,148 @@ class GroupController {
         });
 
         console.log(finalStationList.length);
-        console.log(finalStationList[0]);
+        console.log(finalStationList[0].FID);
 
-        response.sendStatus(200);
+        response.json({ finalStationList });
       });
   }
 
-  NewStation(request, response, next) {}
+  async NewStation(request, response, next) {
+    if (isNaN(parseFloat(request.body.x)) && isNaN(request.body.x - 0)) {
+      response.statusCode = 400;
+      response.write("X is not a number");
+      response.send();
+    } else if (isNaN(parseFloat(request.body.y)) && isNaN(request.body.y - 0)) {
+      response.statusCode = 400;
+      response.write("Y is not a number");
+      response.send();
+    } else if (
+      isNaN(parseFloat(request.body.fid)) &&
+      isNaN(request.body.fid - 0)
+    ) {
+      response.statusCode = 400;
+      response.write("FID is not a number");
+      response.send();
+    } else if (
+      isNaN(parseFloat(request.body.id)) &&
+      isNaN(request.body.id - 0)
+    ) {
+      response.statusCode = 400;
+      response.write("ID is not a number");
+      response.send();
+    } else {
+      var writer = csvWriter();
+      writer = csvWriter({
+        sendHeaders: false,
+      });
+      writer.pipe(
+        fs.createWriteStream(
+          "Helsingin_ja_Espoon_kaupunkipyöräasemat_avoin.csv",
+          {
+            flags: "a",
+          }
+        )
+      );
+      writer.write({
+        header1: `${request.body.fid}`,
+        header2: `${request.body.id}`,
+        header3: `${request.body.nimi}`,
+        header4: `${request.body.namn}`,
+        header5: `${request.body.name}`,
+        header6: `${request.body.osoite}`,
+        header7: `${request.body.address}`,
+        header8: `${request.body.kaupunki}`,
+        header9: `${request.body.stad}`,
+        header10: `${request.body.operaatto}`,
+        header11: `${request.body.kapasiteet}`,
+        header12: `${request.body.x}`,
+        header13: `${request.body.y}`,
+      });
+      writer.end();
 
-  NewJourney(request, response, next) {}
+      response.send({
+        title: "success",
+        statuscode: response.statuscode,
+      });
+    }
+  }
+
+  async NewJourney(request, response, next) {
+    var dateDiff =
+      Number.isInteger(
+        Number(
+          moment(request.body.returnDate).diff(
+            moment(request.body.departureDate)
+          )
+        )
+      ) &&
+      Number(
+        moment(request.body.returnDate).diff(moment(request.body.departureDate))
+      ) > 0;
+    var validDepartureDate = moment(
+      request.body.departureDate,
+      moment.ISO_8601,
+      true
+    ).isValid();
+    var validReturnDate = moment(
+      request.body.returnDate,
+      moment.ISO_8601,
+      true
+    ).isValid();
+    var validDepartureId =
+      Number.isInteger(Number(request.body.departureId)) &&
+      Number(request.body.departureId) > 0;
+    var validReturnId =
+      Number.isInteger(Number(request.body.returnId)) &&
+      Number(request.body.returnId) > 0;
+
+    if (
+      parseInt(request.body.coverDistance) < 10 ||
+      parseInt(request.body.duration) < 10
+    ) {
+      response.statusCode = 400;
+      response.write("Cover distance or duration is not less than 10");
+      response.send();
+    } else if (!validDepartureId || !validReturnId) {
+      response.statusCode = 400;
+      response.write(
+        "Departure station id or Return station id is not a positive integer"
+      );
+      response.send();
+    } else if (!validDepartureDate || !validReturnDate) {
+      response.statusCode = 400;
+      response.write("Not a valid date format");
+      response.send();
+    } else if (!dateDiff) {
+      response.statusCode = 400;
+      response.write("Return Time can not be before Departure time");
+      response.send();
+    } else {
+      var writer = csvWriter();
+      writer = csvWriter({
+        sendHeaders: false,
+      });
+      writer.pipe(
+        fs.createWriteStream("2021-05.csv", {
+          flags: "a",
+        })
+      );
+
+      writer.write({
+        header1: `${request.body.departureDate}`,
+        header2: `${request.body.returnDate}`,
+        header3: `${request.body.departureId}`,
+        header4: `${request.body.departureName}`,
+        header5: `${request.body.returnId}`,
+        header6: `${request.body.returnName}`,
+        header7: `${request.body.coverDistance}`,
+        header8: `${request.body.duration}`,
+      });
+      writer.end();
+
+      response.sendStatus(200);
+    }
+  }
 }
 
 module.exports = new GroupController();

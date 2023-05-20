@@ -1,4 +1,32 @@
-const fs = require("fs");
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: data.controller.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: data.controller.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>const fs = require("fs");
 const moment = require("moment");
 const csvWriter = require("csv-write-stream");
 const csv = require("csv-parser");
@@ -64,17 +92,17 @@ class GroupController {
       var finalJourneyList = [];
       paginatedJourneyList.forEach((item, index) => {
         if (
-          parseInt(item[keys[6]]) > 10 &&
-          parseInt(item[keys[7]]) > 10 &&
-          Number.isInteger(Number(item[keys[2]])) &&
-          Number(item[keys[2]]) > 0 &&
-          Number.isInteger(Number(item[keys[4]])) &&
-          Number(item[keys[4]]) > 0 &&
-          moment(item[keys[1]], moment.ISO_8601, true).isValid() &&
-          moment(item[keys[0]], moment.ISO_8601, true).isValid() &&
+          parseInt(item[keys[6]]) > 10 &amp;&amp;
+          parseInt(item[keys[7]]) > 10 &amp;&amp;
+          Number.isInteger(Number(item[keys[2]])) &amp;&amp;
+          Number(item[keys[2]]) > 0 &amp;&amp;
+          Number.isInteger(Number(item[keys[4]])) &amp;&amp;
+          Number(item[keys[4]]) > 0 &amp;&amp;
+          moment(item[keys[1]], moment.ISO_8601, true).isValid() &amp;&amp;
+          moment(item[keys[0]], moment.ISO_8601, true).isValid() &amp;&amp;
           Number.isInteger(
             Number(moment(item[keys[1]]).diff(moment(item[keys[0]])))
-          ) &&
+          ) &amp;&amp;
           Number(moment(item[keys[1]]).diff(moment(item[keys[0]]))) > 0
         ) {
           var finalJourneyMap = [];
@@ -126,8 +154,8 @@ class GroupController {
         console.log(keys);
         stationList.forEach((item, index) => {
           if (
-            !(isNaN(parseFloat(item[keys[11]])) && isNaN(item[keys[11]] - 0)) &&
-            !(isNaN(parseFloat(item[keys[12]])) && isNaN(item[keys[12]] - 0))
+            !(isNaN(parseFloat(item[keys[11]])) &amp;&amp; isNaN(item[keys[11]] - 0)) &amp;&amp;
+            !(isNaN(parseFloat(item[keys[12]])) &amp;&amp; isNaN(item[keys[12]] - 0))
           ) {
             finalStationList.push(item);
           }
@@ -149,23 +177,23 @@ class GroupController {
    * @returns {void}
    */
   async NewStation(request, response, next) {
-    if (isNaN(parseFloat(request.body.x)) && isNaN(request.body.x - 0)) {
+    if (isNaN(parseFloat(request.body.x)) &amp;&amp; isNaN(request.body.x - 0)) {
       response.statusCode = 400;
       response.write("X is not a number");
       response.send();
-    } else if (isNaN(parseFloat(request.body.y)) && isNaN(request.body.y - 0)) {
+    } else if (isNaN(parseFloat(request.body.y)) &amp;&amp; isNaN(request.body.y - 0)) {
       response.statusCode = 400;
       response.write("Y is not a number");
       response.send();
     } else if (
-      isNaN(parseFloat(request.body.fid)) &&
+      isNaN(parseFloat(request.body.fid)) &amp;&amp;
       isNaN(request.body.fid - 0)
     ) {
       response.statusCode = 400;
       response.write("FID is not a number");
       response.send();
     } else if (
-      isNaN(parseFloat(request.body.id)) &&
+      isNaN(parseFloat(request.body.id)) &amp;&amp;
       isNaN(request.body.id - 0)
     ) {
       response.statusCode = 400;
@@ -224,7 +252,7 @@ class GroupController {
             moment(request.body.departureDate)
           )
         )
-      ) &&
+      ) &amp;&amp;
       Number(
         moment(request.body.returnDate).diff(moment(request.body.departureDate))
       ) > 0;
@@ -239,15 +267,15 @@ class GroupController {
       true
     ).isValid();
     var validDepartureId =
-      Number.isInteger(Number(request.body.departureId)) &&
+      Number.isInteger(Number(request.body.departureId)) &amp;&amp;
       Number(request.body.departureId) > 0;
     var validReturnId =
-      Number.isInteger(Number(request.body.returnId)) &&
+      Number.isInteger(Number(request.body.returnId)) &amp;&amp;
       Number(request.body.returnId) > 0;
 
     if (
-      parseInt(request.body.coverDistance) < 10 ||
-      parseInt(request.body.duration) < 10
+      parseInt(request.body.coverDistance) &lt; 10 ||
+      parseInt(request.body.duration) &lt; 10
     ) {
       response.statusCode = 400;
       response.write("Cover distance or duration is not less than 10");
@@ -354,3 +382,26 @@ function calculateAvgDistance(filteredList) {
 }
 
 module.exports = new GroupController();
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="GroupController.html">GroupController</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Sat May 20 2023 23:57:58 GMT+0300 (Eastern European Summer Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

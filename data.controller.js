@@ -248,6 +248,50 @@ class GroupController {
       response.sendStatus(200);
     }
   }
+
+  async FilterJourney(request, response, next) {
+    var keys = [];
+    journeyList.forEach((item, index) => {
+      keys = Object.keys(item);
+    });
+
+    var returnListFiltered = journeyList.filter(function (e) {
+      // console.log(e);
+
+      return e[keys[5]] === request.body.nimi;
+    });
+    var departureListFiltered = journeyList.filter(function (e) {
+      // console.log(e);
+
+      return e[keys[3]] === request.body.nimi;
+    });
+
+    var avgReturnDistance = calculateAvgDistance(returnListFiltered);
+    var avgDepartureDistance = calculateAvgDistance(departureListFiltered);
+    console.log(departureListFiltered.length);
+    console.log(avgDepartureDistance);
+    console.log(avgReturnDistance);
+    console.log(returnListFiltered.length);
+    response.json({
+      totalReturn: returnListFiltered.length,
+      totalDeparture: departureListFiltered.length,
+      avgReturn: avgReturnDistance,
+      avgDeparture: avgDepartureDistance,
+    });
+  }
+}
+function calculateAvgDistance(filteredList) {
+  let avgDistance = 0;
+  if (filteredList.length === 0) return 0;
+  var keys = [];
+  journeyList.forEach((item, index) => {
+    keys = Object.keys(item);
+  });
+  filteredList.forEach((element) => {
+    avgDistance += parseFloat(element[keys[6]]);
+  });
+
+  return (avgDistance / filteredList.length).toFixed(4);
 }
 
 module.exports = new GroupController();

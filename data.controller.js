@@ -30,9 +30,6 @@ class GroupController {
         journeyList.push(row);
       })
       .on("end", () => {
-        console.log(journeyList.length);
-        console.log(journeyList[0]);
-
         response.sendStatus(200);
         console.timeEnd(__filename);
       });
@@ -60,7 +57,6 @@ class GroupController {
       paginatedJourneyList.forEach((item, index) => {
         keys = Object.keys(item);
       });
-      console.log(keys);
       var finalJourneyList = [];
       paginatedJourneyList.forEach((item, index) => {
         if (
@@ -123,7 +119,6 @@ class GroupController {
         stationList.forEach((item, index) => {
           keys = Object.keys(item);
         });
-        console.log(keys);
         stationList.forEach((item, index) => {
           if (
             !(isNaN(parseFloat(item[keys[11]])) && isNaN(item[keys[11]] - 0)) &&
@@ -132,10 +127,6 @@ class GroupController {
             finalStationList.push(item);
           }
         });
-
-        console.log(finalStationList.length);
-        console.log(finalStationList[0].FID);
-
         response.json({ finalStationList });
       });
   }
@@ -308,22 +299,14 @@ class GroupController {
     });
 
     var returnListFiltered = journeyList.filter(function (e) {
-      // console.log(e);
-
       return e[keys[5]] === request.body.nimi;
     });
     var departureListFiltered = journeyList.filter(function (e) {
-      // console.log(e);
-
       return e[keys[3]] === request.body.nimi;
     });
 
     var avgReturnDistance = calculateAvgDistance(returnListFiltered);
     var avgDepartureDistance = calculateAvgDistance(departureListFiltered);
-    console.log(departureListFiltered.length);
-    console.log(avgDepartureDistance);
-    console.log(avgReturnDistance);
-    console.log(returnListFiltered.length);
     response.json({
       totalReturn: returnListFiltered.length,
       totalDeparture: departureListFiltered.length,
